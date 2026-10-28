@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EFF5F1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>TeeShot · Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+
+/* TeeShot Play — Soft Fairway flat color · A-mist solid #EFF5F1 · A3-mint-original nav · whole-row select */
+
+:root{
+  --green:#0B6B2F; --green-2:#13843F; --green-deep:#0A6129; --logo-green:#006830;
+  --mint:#E3EFE0; --mint-line:#D3E2CF; --mint-ink:#CDE6D3; --mint-soft:#E8F1EB;
+  --fairway:#F5F8F6; --fairway-2:#EEF4F0; --fairway-3:#F1F6EF;
+  --page:#EFF5F1; --page-2:#EFF5F1;
+  --surface:#FFFFFF; --surface-solid:#FFFFFF; --sel-bg:#FAFDF9;
+  --ink:#102017; --muted:#4A5A4F;
+  --yellow:#FFE14D; --yellow-ink:#1A1600;
+  --r:14px;
+  --display:"Anton","Impact","Arial Narrow",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{margin:0;background:#EFF5F1}
+html,body{margin:0}
+body{
+  font-family:var(--body);color:var(--ink);font-size:16px;line-height:1.4;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  background:#EFF5F1;
+  min-height:100vh;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+a{color:inherit;text-decoration:none}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+/* No photo / texture — solid Soft Fairway field only */
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.98);backdrop-filter:saturate(1.2) blur(10px);-webkit-backdrop-filter:saturate(1.2) blur(10px);padding-top:env(safe-area-inset-top,0px)}
+.top-row{display:flex;align-items:center;justify-content:space-between;height:58px;padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+.top-row img{height:26px;width:auto;display:block}
+.hdr-clean .top{border-top:4px solid var(--green);border-bottom:1px solid rgba(211,226,207,.85)}
+.menu{width:44px;height:44px;border-radius:var(--r);background:var(--mint);color:var(--green);display:flex;align-items:center;justify-content:center}
+
+main{flex:1;display:flex;flex-direction:column;gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) 280px max(12px,env(safe-area-inset-left,0px));background:transparent}
+
+.course{display:flex;align-items:center;gap:10px;min-height:52px;padding:6px;border-radius:var(--r);background:var(--surface);border:1.5px solid rgba(211,226,207,.95);box-shadow:0 2px 12px rgba(16,32,23,.06)}
+.badge{position:relative;width:38px;height:38px;border-radius:var(--r);background:var(--green);overflow:hidden;flex-shrink:0}
+.badge::before{content:"";position:absolute;left:-6px;right:-6px;bottom:-10px;height:22px;border-radius:50%;background:#2E9A55}
+.badge svg{position:absolute;left:12px;top:6px}
+.course .txt{flex:1;min-width:0;display:flex;flex-direction:column}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--muted)}
+.course .line{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eyebrow span{color:var(--green)}
+.soft{height:40px;padding:0 12px;border-radius:var(--r);background:transparent;color:var(--green);font-size:15px;font-weight:700;flex-shrink:0;border:1.5px solid rgba(11,107,47,.22)}
+
+.intro{display:flex;flex-direction:column;gap:2px;padding:4px 2px 2px}
+.intro .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.intro h1{margin:0;font-size:22px;line-height:1.2}
+.intro p{margin:0;font-size:15px;color:var(--muted)}
+.steps{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--green);white-space:nowrap}
+.steps i{width:18px;height:6px;border-radius:3px;background:rgba(201,220,197,.85)}.steps i.on{background:var(--green)}
+
+/* Cards — Soft Fairway mist on flat field; whole-row select */
+.card{
+  position:relative;display:flex;flex-direction:column;gap:2px;width:100%;
+  padding:10px 12px 10px 14px;border-radius:var(--r);
+  background:var(--surface);border:1.5px solid rgba(211,226,207,.95);
+  text-align:left;box-shadow:0 2px 12px rgba(16,32,23,.05);
+  transition:border-color .22s ease,background-color .22s ease,box-shadow .22s ease,transform .15s ease;
+  overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:0;
+  background:var(--green);border-radius:var(--r) 0 0 var(--r);
+  transition:width .2s ease;
+}
+.card.on{
+  border-color:var(--green);background:var(--sel-bg);
+  box-shadow:0 6px 18px rgba(11,107,47,.14);
+  padding-left:16px;
+}
+.card.on::before{width:4px}
+button.card:active,.hio-head:active{transform:scale(.985)}
+
+.head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px}
+.name{display:flex;align-items:center;gap:10px;min-width:0}
+.name b{font-size:18px;white-space:nowrap}
+.name small{font-size:15px;font-weight:700;color:var(--muted);white-space:nowrap}
+.tile{
+  width:36px;height:36px;border-radius:var(--r);
+  background:var(--mint);color:var(--green);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background-color .22s ease,color .22s ease,box-shadow .22s ease;
+  position:relative;
+}
+.card.on .tile{background:var(--green);color:var(--yellow);box-shadow:0 2px 6px rgba(11,107,47,.25)}
+.chk{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  border:2px solid #C7D3CB;background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.chk svg{display:none;color:#fff}
+.card.on .chk{
+  background:var(--green);border-color:var(--green);
+  box-shadow:0 2px 6px rgba(11,107,47,.22);
+}
+.card.on .chk svg{display:block}
+
+.hio .tile{position:relative;background:var(--mint)!important;color:inherit}
+.hio.on .tile{background:var(--green)!important}
+.hio .tile::before{content:"";position:absolute;left:7px;bottom:7px;width:22px;height:8px;border-radius:50%;background:var(--green)}
+.hio.on .tile::before{background:rgba(255,225,77,.85)}
+.hio .tile svg{position:absolute;left:13px;top:5px}
+.hio-title{font-family:var(--display);font-size:22px;line-height:1.1;letter-spacing:.01em}
+.desc{font-size:15px;color:var(--muted)}.desc b{color:var(--green)}
+
+.hio-head{display:flex;flex-direction:column;gap:2px;text-align:left;width:100%;transition:transform .15s ease}
+.hio-open{display:flex;flex-direction:column;gap:6px;margin-top:8px;animation:open .3s ease-out}
+.pair{display:flex;gap:8px}
+.stepper{flex:1;display:flex;align-items:center;justify-content:space-between;gap:4px;padding:6px;border-radius:var(--r);background:var(--mint)}
+.stepper button{width:44px;height:48px;border-radius:var(--r);background:#fff;color:var(--green);font-size:24px;font-weight:700;transition:transform .12s ease}
+.stepper button:active{transform:scale(.94)}
+.stepper button:disabled{opacity:.4}
+.amt{display:flex;flex-direction:column;align-items:center}
+.amt small{font-size:13px;font-weight:600;color:var(--muted)}
+.amt b,.ace b{font-family:var(--display);font-weight:400;font-size:24px;line-height:1.05;font-variant-numeric:tabular-nums}
+.ace{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 8px;border-radius:var(--r);background:repeating-linear-gradient(135deg,var(--green) 0 14px,var(--green-deep) 14px 28px);color:#fff}
+.ace::before{content:"";position:absolute;right:-14px;top:-14px;width:46px;height:46px;border-radius:50%;border:6px solid rgba(255,225,77,.22)}
+.ace::after{content:"";position:absolute;left:8px;bottom:6px;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+.ace small{position:relative;display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--mint-ink)}
+.ace b{position:relative;font-size:26px;color:var(--yellow)}
+.slide{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--muted)}
+.slide input{flex:1;height:36px;margin:0;accent-color:var(--green)}
+
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:20}
+.bottom-in{max-width:480px;margin:0 auto;background:var(--surface);border-radius:var(--r) var(--r) 0 0;box-shadow:0 -6px 18px rgba(16,32,23,.08);border-top:1px solid var(--mint-line);overflow:hidden}
+.dock{display:flex;align-items:center;gap:12px;padding:10px max(12px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.sum{flex:1;min-width:0;display:flex;flex-direction:column}
+.sum small{font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sum .tot{display:flex;align-items:center;gap:8px}
+.sum .tot b{font-family:var(--display);font-weight:400;font-size:28px;line-height:1.05;font-variant-numeric:tabular-nums}
+.chips{display:flex}
+.chips span{width:24px;height:24px;margin-left:-4px;border-radius:50%;background:var(--green);border:2px solid #fff;color:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;animation:pop .28s cubic-bezier(.2,.9,.3,1.3)}
+.chips span:first-child{margin-left:0}
+.cta{display:flex;align-items:center;gap:8px;height:54px;padding:0 20px;border-radius:var(--r);background:var(--yellow);color:var(--yellow-ink);font-size:18px;font-weight:700;flex-shrink:0;transition:transform .12s ease,background-color .2s ease}
+.cta:active{transform:scale(.96)}
+.cta:disabled{background:var(--mint);color:var(--muted);padding:0 18px;font-size:16px}
+.cta:disabled svg{display:none}
+
+.toast{position:fixed;left:50%;top:calc(76px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:40;width:max-content;max-width:90vw;padding:12px 16px;border-radius:var(--r);background:var(--ink);color:#fff;font-weight:600;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+[hidden]{display:none!important}
+@keyframes pop{from{transform:scale(.8);opacity:.4}to{transform:scale(1);opacity:1}}
+@keyframes open{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Bottom nav — exact from teeshot-play-A3-mint-original.html */
+nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));background:var(--mint)}
+nav a{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;height:46px;border-radius:var(--r);color:#34463A;font-size:15px;font-weight:600;transition:background-color .2s ease,color .2s ease;text-decoration:none}
+nav a.cur{background:var(--surface);color:var(--green);font-weight:700;box-shadow:0 2px 8px rgba(11,107,47,.18)}
+nav a.off{opacity:.38;pointer-events:none;cursor:default}
+
+
+/* Course Change sheet — Soft Fairway */
+.sheet-backdrop{position:fixed;inset:0;z-index:50;background:rgba(16,32,23,.45);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;max-width:480px;margin:0 auto;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(16,32,23,.22);padding:8px 16px calc(20px + env(safe-area-inset-bottom,0px));max-height:min(72vh,560px);display:flex;flex-direction:column;animation:sheetUp .28s cubic-bezier(.2,.8,.2,1)}
+.sheet-handle{width:40px;height:4px;border-radius:999px;background:#D3E2CF;margin:6px auto 12px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.sheet-head h2{margin:0;font-size:20px;font-weight:700;color:var(--ink)}
+.sheet-close{height:40px;padding:0 14px;border-radius:12px;background:var(--mint);color:var(--green);font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:700}
+.sheet-list{overflow:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.course-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px 14px;border-radius:16px;border:1.5px solid rgba(211,226,207,.95);background:#FAFDF9;transition:border-color .15s,background .15s,box-shadow .15s}
+.course-opt:active{transform:scale(.985)}
+.course-opt.on{border-color:var(--green);background:#F0F9F2;box-shadow:inset 3px 0 0 var(--green)}
+.course-opt .co-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.course-opt .co-txt b{font-size:16px;font-weight:700;color:var(--ink)}
+.course-opt .co-txt small{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.course-opt .co-chk{width:26px;height:26px;border-radius:50%;border:2px solid #CDE6D3;display:flex;align-items:center;justify-content:center;color:transparent;flex-shrink:0;background:#fff}
+.course-opt.on .co-chk{background:var(--green);border-color:var(--green);color:#FFE14D}
+@keyframes sheetUp{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}
+
+
+
+/* —— Responsive scale (t183u) ——
+   Base (~390 / regular iPhone): restore pre-densify comfortable spacing
+   Mid ≥393 (Pro): mild breathe
+   Large ≥430 (Pro Max): noticeably larger type + padding (+2–4px / roomy)
+*/
+:root{
+  --fs-body:16px;
+  --fs-title:22px;
+  --fs-hio:22px;
+  --fs-name:18px;
+  --fs-desc:15px;
+  --fs-eyebrow:13px;
+  --fs-soft:15px;
+  --fs-nav:15px;
+  --fs-cta:18px;
+  --fs-tot:28px;
+  --fs-amt:26px;
+  --fs-ace:24px;
+  --pad-main-y:10px;
+  --pad-main-b:calc(248px + env(safe-area-inset-bottom,0px));
+  --gap-main:8px;
+  --top-h:58px;
+  --course-h:52px;
+  --card-pad:10px 12px 10px 14px;
+  --tile:36px;
+  --chk:28px;
+  --cta-h:54px;
+  --nav-h:46px;
+  --dock-pad-y:12px;
+  --step-btn-h:48px;
+  --step-btn-w:44px;
+  --r:14px;
+}
+body{font-size:var(--fs-body);min-height:100dvh;min-height:100vh}
+.app{min-height:100dvh;min-height:100vh}
+.top-row{height:var(--top-h);padding:0 max(12px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+.top-row img{height:26px}
+.menu{width:44px;height:44px;border-radius:var(--r)}
+.menu svg{width:22px;height:22px}
+main{gap:var(--gap-main);padding:var(--pad-main-y) max(12px,env(safe-area-inset-right,0px)) var(--pad-main-b) max(12px,env(safe-area-inset-left,0px))}
+.course{gap:10px;min-height:var(--course-h);padding:6px;border-radius:var(--r)}
+.badge{width:38px;height:38px;border-radius:var(--r)}
+.eyebrow{font-size:var(--fs-eyebrow);letter-spacing:.04em}
+.course .line{font-size:16px}
+.soft{height:40px;padding:0 12px;font-size:var(--fs-soft);border-radius:var(--r);flex-shrink:0}
+.intro{gap:2px;padding:4px 2px 2px}
+.intro .row{gap:8px}
+.intro h1{font-size:var(--fs-title);line-height:1.2}
+.intro p{font-size:var(--fs-desc);line-height:1.35}
+.steps{font-size:13px;gap:6px}
+.steps i{width:16px;height:4px}
+.card{gap:2px;padding:var(--card-pad);border-radius:var(--r);box-shadow:0 2px 12px rgba(16,32,23,.05)}
+.card.on{padding-left:16px}
+.head{min-height:36px;gap:8px}
+.name{gap:10px}
+.name b{font-size:var(--fs-name)}
+.name small{font-size:15px}
+.tile{width:var(--tile);height:var(--tile);border-radius:var(--r)}
+.chk{width:var(--chk);height:var(--chk)}
+.hio-title{font-size:var(--fs-hio)}
+.desc{font-size:var(--fs-desc);line-height:1.35}
+.hio-open{gap:6px;margin-top:8px}
+.pair{gap:8px}
+.stepper{padding:4px;border-radius:var(--r)}
+.stepper button{width:var(--step-btn-w);height:var(--step-btn-h);font-size:24px;border-radius:var(--r)}
+.amt small,.ace small{font-size:13px}
+.amt b,.ace b{font-size:var(--fs-amt)}
+.ace{padding:6px 8px;border-radius:var(--r)}
+.ace b{font-size:var(--fs-ace)}
+.slide{gap:8px;font-size:14px}
+.slide input{height:36px}
+.bottom-in{border-radius:16px 16px 0 0}
+.dock{gap:12px;padding:var(--dock-pad-y) max(12px,env(safe-area-inset-right,0px)) var(--dock-pad-y) max(16px,env(safe-area-inset-left,0px))}
+.sum{min-width:0}
+.sum small{font-size:14px}
+.sum .tot{gap:8px}
+.sum .tot b{font-size:var(--fs-tot)}
+.chips span{width:24px;height:24px;font-size:10px}
+.cta{height:var(--cta-h);padding:0 20px;font-size:var(--fs-cta);border-radius:var(--r);max-width:none;white-space:nowrap}
+.cta:disabled{padding:0 18px;font-size:16px}
+.cta svg{flex-shrink:0;width:20px;height:20px}
+.toast{top:calc(58px + env(safe-area-inset-top,0px));padding:10px 14px;font-size:14px}
+nav{gap:6px;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav a{gap:6px;height:var(--nav-h);font-size:var(--fs-nav);border-radius:var(--r);padding:0 6px}
+nav a svg{width:20px;height:20px;flex-shrink:0}
+.sheet{padding:8px 16px calc(20px + env(safe-area-inset-bottom,0px));border-radius:20px 20px 0 0}
+.sheet h2{font-size:20px}
+.sheet-close{width:40px;height:40px;font-size:22px}
+
+/* Pro (~393) — mild breathe above base */
+@media (min-width:393px){
+  :root{
+    --fs-title:clamp(22px,5.2vw,24px);
+    --fs-hio:clamp(22px,5.4vw,24px);
+    --fs-name:19px;
+    --fs-tot:clamp(28px,6vw,30px);
+    --pad-main-y:12px;
+    --gap-main:10px;
+    --top-h:60px;
+    --card-pad:12px 14px 12px 16px;
+    --cta-h:56px;
+    --nav-h:48px;
+    --fs-cta:19px;
+    --fs-nav:15px;
+  }
+  .course .line{font-size:16px}
+  .name small{font-size:15px}
+}
+
+/* Pro Max (≥430) — noticeably larger type + spacing */
+@media (min-width:430px){
+  :root{
+    --fs-body:18px;
+    --fs-title:clamp(24px,5.2vw,26px);
+    --fs-hio:clamp(24px,5.4vw,26px);
+    --fs-name:20px;
+    --fs-desc:17px;
+    --fs-eyebrow:14px;
+    --fs-soft:16px;
+    --fs-nav:16px;
+    --fs-cta:20px;
+    --fs-tot:clamp(30px,6.2vw,34px);
+    --fs-amt:28px;
+    --fs-ace:28px;
+    --pad-main-y:14px;
+    --pad-main-b:calc(280px + env(safe-area-inset-bottom,0px));
+    --gap-main:12px;
+    --top-h:64px;
+    --course-h:58px;
+    --card-pad:14px 16px 14px 18px;
+    --tile:42px;
+    --chk:32px;
+    --cta-h:58px;
+    --nav-h:52px;
+    --dock-pad-y:14px;
+    --step-btn-h:52px;
+    --step-btn-w:48px;
+    --r:16px;
+  }
+  .top-row img{height:30px}
+  .menu{width:48px;height:48px}
+  .menu svg{width:24px;height:24px}
+  .badge{width:42px;height:42px}
+  .course .line{font-size:17px}
+  .soft{height:44px;padding:0 14px;font-size:16px}
+  .name small{font-size:16px}
+  .amt small,.ace small{font-size:14px}
+  .slide{font-size:15px}
+  .slide input{height:40px}
+  .sum small{font-size:15px}
+  .intro p{font-size:17px}
+  .steps{font-size:14px}
+  .stepper button{font-size:26px}
+  .chips span{width:28px;height:28px;font-size:11px}
+  .cta{padding:0 22px}
+  .cta:disabled{padding:0 18px;font-size:17px}
+  .cta svg{width:22px;height:22px}
+  nav a{gap:8px;padding:0 8px}
+  nav a svg{width:22px;height:22px}
+  .card{box-shadow:0 3px 14px rgba(16,32,23,.06)}
+  .toast{top:calc(64px + env(safe-area-inset-top,0px));padding:12px 16px;font-size:15px}
+  .sheet h2{font-size:22px}
+  .sheet-close{width:44px;height:44px}
+}
+
+
+
+/* ===== Shared app pages (Swings · Result · Leaderboard) — same Soft Fairway tokens ===== */
+main.page{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+main.page.has-dock{padding-bottom:calc(176px + env(safe-area-inset-bottom,0px))}
+.panel{background:var(--surface);border:1.5px solid rgba(211,226,207,.95);border-radius:var(--r);box-shadow:0 2px 12px rgba(16,32,23,.05)}
+.label{font-size:var(--fs-eyebrow);font-weight:700;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+.label span{color:var(--green)}
+.big{font-family:var(--display);font-weight:400;line-height:1.05;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.chips-row{display:flex;gap:8px;overflow-x:auto;margin:0 calc(-1 * max(12px,env(safe-area-inset-left,0px)));padding:2px max(12px,env(safe-area-inset-left,0px)) 4px;scrollbar-width:none}
+.chips-row::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;height:42px;padding:0 14px;border-radius:var(--r);border:1.5px solid rgba(211,226,207,.95);background:var(--surface);font-size:15px;font-weight:600;color:#34463A;white-space:nowrap;transition:background-color .2s,color .2s,border-color .2s}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.tag{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 9px;border-radius:var(--r);background:var(--mint);color:var(--green);font-size:13px;font-weight:700;white-space:nowrap}
+.tag svg{flex-shrink:0}
+.res{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;border-radius:var(--r);font-size:14px;font-weight:700;white-space:nowrap}
+.res.won{background:var(--yellow);color:var(--yellow-ink)}
+.res.rank{background:var(--mint);color:var(--green)}
+.res.wait{background:#FFF4CC;color:#5C4600}
+.res.miss{background:#EEF1EE;color:#3E4A42}
+.link{display:inline-flex;align-items:center;gap:4px;font-size:15px;font-weight:700;color:var(--green)}
+.row-card{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;text-align:left}
+.row-card .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.row-card b{font-size:var(--fs-name);line-height:1.25}
+.row-card small{font-size:var(--fs-desc);color:var(--muted)}
+.arrow{width:36px;height:36px;border-radius:var(--r);background:var(--mint);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tile.gold{background:var(--green);color:var(--yellow)}
+.dock .cta{flex:1;justify-content:center}
+.dock .soft{height:var(--cta-h);padding:0 16px;display:inline-flex;align-items:center;gap:6px}
+a.cta{text-decoration:none}
+.top-row .back{display:inline-flex;align-items:center;gap:4px;height:44px;padding:0 14px 0 8px;border-radius:var(--r);background:var(--mint);color:var(--green);font-size:15px;font-weight:700}
+.top-row .title{font-size:17px;font-weight:700}
+.fade-in{animation:open .3s ease-out}
+
+/* ===== Leaderboard v3 — game switcher + visual scoreboard ===== */
+.lb-top{display:flex;flex-direction:column;gap:2px;padding:2px 2px 0}
+.lb-top h1{margin:0;font-size:var(--fs-title);line-height:1.2}
+.lb-top p{margin:0;font-size:15px;color:var(--muted)}
+
+/* 3-button game switcher */
+.switch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.switch button{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;min-height:52px;padding:6px 10px;border-radius:var(--r);line-height:1.15;color:#34463A;text-align:left;border:1.5px solid rgba(211,226,207,.95);background:var(--surface);transition:background-color .2s,color .2s,transform .15s}
+.switch button:active{transform:scale(.97)}
+.switch button b{font-size:14px;font-weight:700}
+.switch button small{font-size:12px;font-weight:600;color:var(--muted)}
+.switch button.on small{color:#CFE5D6}
+.switch button.on{background:var(--green);border-color:var(--green);color:#fff}
+
+.blurb{display:flex;flex-direction:column;gap:6px;align-items:flex-start;padding:2px 2px 0}
+.blurb .tagx{flex-shrink:0;height:26px;padding:0 8px;border-radius:var(--r);background:var(--mint);color:var(--green);font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;margin-top:1px}
+.blurb div{display:flex;flex-direction:column;gap:1px;min-width:0}
+.blurb b{font-size:16px;line-height:1.3}
+.blurb small{font-size:14px;color:var(--muted);line-height:1.35}
+
+/* Course + day strip */
+.where{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.where .pin{width:40px;height:40px;border-radius:var(--r);background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.where .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+.where b{font-size:16px}
+.where small{font-size:13px;color:var(--muted)}
+.where .soft{height:40px;padding:0 14px;border-radius:var(--r);background:var(--mint);color:var(--green);font-size:15px;font-weight:700}
+.where-card{display:flex;flex-direction:column;padding-bottom:10px}
+.days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 12px 2px;border-top:1px solid rgba(211,226,207,.8);padding-top:10px}
+.days::-webkit-scrollbar{display:none}
+.day{flex:0 0 auto;min-width:64px;height:62px;border-radius:var(--r);background:var(--surface);border:1.5px solid rgba(211,226,207,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;color:#34463A;transition:background-color .2s,border-color .2s}
+.day small{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.day b{font-family:var(--display);font-weight:400;font-size:24px;line-height:1.05}
+.day.latest b{font-family:inherit;font-size:15px;font-weight:800;line-height:1.3}
+.day.on{background:var(--green);border-color:var(--green);color:#fff}
+.day.on small{color:#CFE5D6}
+.dayline{display:flex;justify-content:space-between;align-items:center;padding:8px 12px 0;font-size:14px;color:var(--muted)}
+.dayline b{color:var(--ink);font-weight:700}
+
+/* Spotlight */
+.spot{overflow:hidden}
+.spot .vid{position:relative;aspect-ratio:16/9;background:#0F2A1A}
+.spot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.spot .rk{position:absolute;left:10px;top:10px;height:30px;padding:0 10px;border-radius:var(--r);background:var(--yellow);color:var(--yellow-ink);font-size:14px;font-weight:800;display:inline-flex;align-items:center;gap:5px}
+.spot .rk.plain{background:rgba(255,255,255,.94);color:var(--green)}
+.spot .k4{position:absolute;left:10px;bottom:10px;height:22px;padding:0 7px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center}
+.spot .pp{position:absolute;right:10px;bottom:10px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.95);color:var(--green);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.spot .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}
+.spot .who{display:flex;align-items:center;gap:10px}
+.av{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:var(--mint);color:var(--green)}
+.spot .who .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+.spot .who b{font-size:18px}
+.spot .who small{font-size:14px;color:var(--muted)}
+.spot .meas{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.spot .meas .big{font-size:52px;line-height:.95;color:var(--ink)}
+.spot .meas .big em,.ft em{font-style:normal;font-size:.45em;margin-left:2px}
+.spot .meas small{font-size:13px;color:var(--muted);text-align:right;line-height:1.3}
+
+/* Proximity track (ball → pin) */
+.track{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,#E3EFE0,#CDE6D3)}
+.track .ball{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;border:2px solid var(--green);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.track .flag{position:absolute;right:-4px;top:-8px;height:18px}
+
+.hhead{display:flex;justify-content:space-between;align-items:baseline;padding:4px 2px 0}
+.hhead b{font-size:var(--fs-name)}
+.hhead small{font-size:13px;color:var(--muted);font-weight:600}
+.shots{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * max(12px,env(safe-area-inset-left,0px)));padding:2px max(12px,env(safe-area-inset-left,0px)) 4px}
+.shots::-webkit-scrollbar{display:none}
+.shot{position:relative;flex:0 0 150px;height:104px;border-radius:var(--r);overflow:hidden;border:3px solid transparent;color:#fff;text-align:left;background:#0F2A1A;transition:border-color .2s}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.shot::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.7))}
+.shot.on{border-color:var(--yellow)}
+.shot .tag1{position:absolute;left:6px;top:6px;z-index:1;padding:1px 7px;border-radius:var(--r);background:var(--green);color:var(--yellow);font-size:12px;font-weight:800}
+.shot .ply{position:absolute;right:6px;top:6px;z-index:1;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--green);display:flex;align-items:center;justify-content:center}
+.shot .meta{position:absolute;left:8px;bottom:6px;z-index:1;display:flex;flex-direction:column}
+.shot .meta .big{font-size:20px}
+.shot .meta small{font-size:12px;font-weight:600}
+
+.board{display:flex;flex-direction:column}
+.board .r{display:grid;grid-template-columns:28px 52px 1fr auto;grid-template-rows:auto auto;column-gap:10px;row-gap:10px;align-items:center;padding:10px 12px;border-top:1px solid rgba(211,226,207,.8)}
+.board .r:first-child{border-top:0}
+button.r{width:100%;text-align:left}
+.board .pos{grid-row:1/3;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:#EEF1EE;color:#34463A}
+.board .pos.p1{background:var(--yellow);color:var(--yellow-ink)}
+.board .mini{grid-row:1/3;position:relative;width:52px;height:40px;border-radius:10px;overflow:hidden;background:#DDE7E0}
+.board .mini img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.board .nm{display:flex;flex-direction:column;min-width:0}
+.board .nm b{font-size:15px}
+.board .nm small{font-size:12px;color:var(--muted);line-height:1.3}
+.board .big{font-size:20px;text-align:right}
+.board .track{grid-column:3/5;height:8px}
+.board .track .ball{width:12px;height:12px;margin:-6px 0 0 -6px}
+
+/* HIO */
+.jack{position:relative;overflow:hidden;border-radius:var(--r);color:#fff;background:#0F2A1A;box-shadow:0 6px 18px rgba(16,32,23,.16)}
+.jack img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.jack .in{position:relative;padding:14px;display:flex;flex-direction:column;gap:10px}
+.jack .ey{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--yellow)}
+.jack h2{margin:0;font-family:var(--display);font-weight:400;font-size:32px;line-height:1;text-transform:uppercase}
+.jack p{margin:0;font-size:14px;color:#DDEDE2;line-height:1.35}
+.ladder{display:flex;flex-direction:column;gap:6px;background:rgba(8,30,17,.72);border-radius:var(--r);padding:10px}
+.ladder .lbl{font-size:12px;font-weight:800;letter-spacing:.06em;color:#BFD6C6}
+.rung{display:grid;grid-template-columns:76px 1fr;white-space:nowrap;align-items:center;gap:8px;font-size:14px}
+.rung .bar{position:relative;height:26px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden}
+.rung .fill{position:absolute;inset:0 auto 0 0;border-radius:8px;background:linear-gradient(90deg,#1E8A47,#2FB061)}
+.rung.max .fill{background:linear-gradient(90deg,#E9C93A,#FFE14D)}
+.rung .val{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--display);font-size:17px;letter-spacing:.01em}
+.rung.max .val{color:var(--yellow-ink)}
+.ladder .fine{font-size:12px;color:#BFD6C6}
+.jack .cta{width:100%;justify-content:center}
+.noace{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.noace .cup{width:52px;height:52px;flex-shrink:0}
+.noace .grow{flex:1;display:flex;flex-direction:column;gap:2px}
+.noace b{font-size:16px}
+.noace small{font-size:14px;color:var(--muted);line-height:1.35}
+.steps3{display:flex;flex-direction:column;padding:6px 14px}
+.steps3 .st{display:flex;align-items:center;gap:12px;padding:8px 0;position:relative}
+.steps3 .st .ic{width:38px;height:38px;border-radius:50%;background:var(--mint);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
+.steps3 .st:not(:last-child)::after{content:"";position:absolute;left:18px;top:42px;bottom:-6px;width:2px;background:#CDE6D3}
+.steps3 .st span{font-size:15px;color:#34463A;line-height:1.35}
+
+/* Longest putt */
+.soonc{position:relative;overflow:hidden;border-radius:var(--r);color:#fff;min-height:260px;display:flex;align-items:flex-end;box-shadow:0 6px 18px rgba(16,32,23,.16)}
+.soonc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.soonc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,30,17,.1) 20%,rgba(8,30,17,.88) 100%)}
+.soonc .in{position:relative;z-index:1;padding:14px;display:flex;flex-direction:column;gap:6px}
+.soonc .ey{align-self:flex-start;height:28px;padding:0 10px;border-radius:var(--r);background:var(--yellow);color:var(--yellow-ink);font-size:13px;font-weight:800;display:inline-flex;align-items:center}
+.soonc h2{margin:0;font-family:var(--display);font-weight:400;font-size:32px;line-height:1;text-transform:uppercase}
+.soonc p{margin:0;font-size:15px;color:#DDEDE2}
+.sample{display:inline-flex;align-items:center;height:20px;padding:0 6px;margin-left:6px;border-radius:6px;background:rgba(255,255,255,.2);font-size:10px;font-weight:800;letter-spacing:.06em;vertical-align:middle}
+.notify{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:var(--r);background:rgba(255,255,255,.92);color:var(--green);font-size:16px;font-weight:700;margin-top:4px}
+.more{text-align:center;font-size:14px;color:var(--muted);margin:2px 0}
+
+details.fair{padding:10px 14px}
+details.fair summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--green);list-style:none;display:flex;align-items:center;gap:6px}
+details.fair summary::-webkit-details-marker{display:none}
+details.fair p{margin:8px 0 0;font-size:14px;color:var(--muted);line-height:1.45}
+
+/* Course sheet */
+.sheet-bg{position:fixed;inset:0;z-index:60;background:rgba(10,25,16,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet-bg[hidden]{display:none}
+.sheet{width:100%;max-width:480px;background:var(--page);border-radius:var(--r) var(--r) 0 0;padding:14px 12px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px;animation:open .25s ease-out}
+.sheet .hd{display:flex;justify-content:space-between;align-items:center}
+.sheet .hd b{font-size:18px}
+.sheet .x{width:40px;height:40px;border-radius:var(--r);background:var(--mint);color:var(--green);display:flex;align-items:center;justify-content:center}
+.search{display:flex;align-items:center;gap:8px;height:48px;padding:0 14px;border-radius:var(--r);background:var(--surface);border:1.5px solid rgba(211,226,207,.95)}
+.search input{flex:1;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);min-width:0}
+.crow{display:flex;align-items:center;gap:10px;padding:12px 14px;text-align:left;width:100%}
+.crow .grow{flex:1;min-width:0;display:flex;flex-direction:column}
+.crow b{font-size:17px}
+.crow small{font-size:14px;color:var(--muted)}
+.tday{height:26px;padding:0 8px;border-radius:var(--r);background:#FFF4CC;color:#5C4600;font-size:12px;font-weight:800;display:inline-flex;align-items:center;white-space:nowrap}
+@media (min-width:430px){.switch button b{font-size:16px}.spot .meas .big{font-size:58px}.shot{flex-basis:164px}}
+</style>
+</head>
+<body class="hdr-clean">
+<div class="app">
+  <header class="top">
+    <div class="top-row">
+      <img src="logo.png" alt="TeeShot.ai">
+      <button class="menu" type="button" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="lb-top">
+      <h1>Leaderboard</h1>
+      <p>Pick a game to see its winners and every AI‑measured shot.</p>
+    </div>
+
+    <div class="switch" role="tablist" aria-label="Choose game">
+      <button type="button" role="tab" data-tab="hio" aria-selected="false"><b>Hole-in-One</b><small>All courses</small>
+      </button>
+      <button type="button" role="tab" data-tab="ctp" aria-selected="true" class="on"><b>Closest to the Pin</b><small>Daily</small>
+      </button>
+      <button type="button" role="tab" data-tab="putt" aria-selected="false"><b>Longest Putt</b><small>Coming soon</small>
+      </button>
+    </div>
+
+    <div id="view"></div>
+
+    <details class="panel fair" id="fair">
+      <summary><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Fair play</summary>
+      <p>Every shot is filmed on the course camera and measured by TeeShot AI from where the ball comes to rest to the cup. Shots flagged for review are checked by staff before they count. Daily winners are announced at the end of the day, 11:30 PM Toronto time; ties go to the earlier shot. Players must be 16+.</p>
+    </details>
+  </main>
+
+  <div class="bottom">
+    <div class="bottom-in">
+      <nav aria-label="App">
+        <a href="Play.html"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5l12 7-12 7V5z"/></svg>Play</a>
+        <a href="Swings.html"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M21 8l-5 4 5 4V8z"/></svg>Swings</a>
+        <a href="Leaderboard.html" class="cur" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 6h3a3 3 0 0 1-3 3M7 6H4a3 3 0 0 0 3 3"/></svg>Leaderboard</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="sheet-bg" id="sheet" hidden>
+    <div class="sheet" role="dialog" aria-label="Choose a course">
+      <div class="hd"><b>Choose a course</b><button class="x" type="button" id="close" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5A4F" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search courses" autocomplete="off"></label>
+      <button class="panel crow" type="button" id="c-glen"><span class="grow"><b>Glen Eagle Golf Club</b><small>Bolton, Ontario</small></span><span class="tday">Today's contest</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(x) { return String(x).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var CF = 'https://d3swqc5tw3uwwq.cloudfront.net/raw-shots/feed-cache/annotated/';
+  var PLAY = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8V4z"/></svg>';
+  var PAUSE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+  var FLAG = '<svg class="flag" width="14" height="22" viewBox="0 0 14 22" fill="none" aria-hidden="true"><path d="M2 2v18" stroke="#0B6B2F" stroke-width="2" stroke-linecap="round"/><path d="M3 3l9 3.5-9 3.5z" fill="#0B6B2F"/></svg>';
+  var ORD = ['1st', '2nd', '3rd', '4th', '5th'];
+  function shot(name, ini, ft, key, id) { return { name: name, ini: ini, ft: ft, thumb: CF + key + '/thumbnail/launch_angle.jpg', vid: CF + key + '/feed_proxy/launch_angle.mp4', id: id }; }
+  function ft(v) { return esc(v) + '<em>ft</em>'; }
+  // ball position on a 0–100% track: closer to the pin = further right (log scale, 0.5 ft → ~96%, 160 ft → ~4%)
+  function trackPos(v) { var x = Math.log(+v + 1) / Math.log(161); return Math.round(96 - x * 92); }
+  function track(v) { return '<span class="track" aria-hidden="true"><span class="ball" style="left:' + trackPos(v) + '%"></span>' + FLAG + '</span>'; }
+
+  var COURSE = 'Glen Eagle Golf Club';
+  var DAYS = [ // oldest → newest
+    { chip: 'Jul 8', wd: 'Wed', dn: '8', mo: 'Jul', full: 'Wed, Jul 8, 2026', long: 'Wednesday, July 8', k4: true,
+      shots: [shot('Aidan S.', 'A.S.', '8.15', '17b1b56d-06f6-4a66-a837-6cc6cbaad1d9', '488e51c7-8f8d-419a-acc3-030fe2b5813f'), shot('Aidan S.', 'A.S.', '159.56', '682221ba-ac9f-46c7-80fa-76c5a206b5bd', '241fc6e6-28cb-4521-8a61-d93e936f1ed7')] },
+    { chip: 'Sep 2', wd: 'Wed', dn: '2', mo: 'Sep', full: 'Wed, Sep 2, 2026', long: 'Wednesday, September 2', k4: true,
+      shots: [shot('Vito V.', 'V.V.', '6.58', '507aae15-71a6-40ff-b8c2-c2e5b44393ff', 'ab41d1da-6a99-4775-95ce-4308a8b7ba8e')] },
+    { chip: 'Sep 4', wd: 'Fri', dn: '4', mo: 'Sep', full: 'Fri, Sep 4, 2026', long: 'Friday, September 4', k4: false,
+      shots: [shot('Bruno B.', 'B.B.', '11', 'b563a3cc-4c27-4cb3-bd2c-d7c4db6dddf8/1792357944-176294', 'a6645d45-8659-403e-bfff-ff045a484a9f'), shot('Vito V.', 'V.V.', '32.5', '9aebdaa4-1e99-4a4d-9aff-d8d6d8c4a47e/1792353522-176190', '54797306-150a-41fb-8b5b-d832544ff3fb')] }
+  ];
+  var CALLS = [
+    ['Llll N.', 'Pebble Beach Golf Links · Jul 8', '0.7', '086cae42-dac6-438b-8926-750572b29e8f'],
+    ['Adrian M.', 'Pebble Beach Golf Links · Jun 12', '0.7', '3f1afcfc-77c8-4e74-987f-9cc60e5bb55f'],
+    ['Lucas L.', 'Pebble Beach Golf Links · Jul 10', '4.14', '3d3026c6-357a-4130-9e4c-9fe4548fba6e'],
+    ['Vito V.', 'Glen Eagle Golf Club · Sep 2', '6.58', '507aae15-71a6-40ff-b8c2-c2e5b44393ff'],
+    ['Aidan S.', 'Glen Eagle Golf Club · Jul 8', '8.15', '17b1b56d-06f6-4a66-a837-6cc6cbaad1d9']
+  ];
+  var s = { tab: 'ctp', d: null, f: 0 }; // d null = Latest
+
+  function blurb(tag, b, sm) { return '<div class="blurb"><span class="tagx">' + tag + '</span><div><b>' + b + '</b><small>' + sm + '</small></div></div>'; }
+
+  function vCtp() {
+    var latest = s.d === null, di = latest ? DAYS.length - 1 : s.d, d = DAYS[di], f = Math.min(s.f, d.shots.length - 1), w = d.shots[f], v = '';
+    v += '<section class="panel where-card"><div class="where"><span class="pin" aria-hidden="true"><svg width="16" height="26" viewBox="0 0 16 26" fill="none"><path d="M2 2v22" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M3 3l10 4-10 4z" fill="#FFE14D"/></svg></span><span class="grow"><b>' + COURSE + '</b><small>Bolton, Ontario</small></span><button class="soft" type="button" id="change">Change</button></div>';
+    v += '<div class="days" role="tablist" aria-label="Contest day"><button type="button" class="day latest' + (latest ? ' on' : '') + '" data-day="L"><small>Latest</small><b>results</b></button>' +
+      DAYS.map(function (x, i) { return i; }).reverse().map(function (i) { var x = DAYS[i];
+        return '<button type="button" class="day' + (!latest && i === di ? ' on' : '') + '" data-day="' + i + '" aria-label="' + x.full + '"><small>' + x.wd + '</small><b>' + x.dn + '</b><small>' + x.mo + '</small></button>';
+      }).join('') + '</div><div class="dayline"><span>' + (latest ? 'Latest results' : 'Contest day') + ' · <b>' + d.full + '</b></span></div></section>';
+
+    v += '<section class="panel spot fade-in"><div class="vid"><video id="hv" src="' + w.vid + '" poster="' + w.thumb + '" muted playsinline autoplay loop preload="metadata"></video>' +
+      '<span class="rk' + (f ? ' plain' : '') + '">' + (f ? ORD[f] : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/></svg>1st') + '</span>' +
+      (d.k4 ? '<span class="k4">4K</span>' : '') + '<button class="pp" id="pp" type="button" aria-label="Pause shot video">' + PAUSE + '</button></div>' +
+      '<div class="body"><div class="who"><span class="av">' + esc(w.ini) + '</span><span class="grow"><b>' + ORD[f] + ' · ' + esc(w.name) + '</b><small>' + (f === 0 ? 'Won the daily prize pool' : COURSE) + '</small></span>' +
+        '</div>' +
+      '<div class="meas"><span class="big">' + ft(w.ft) + '</span><small>from the pin<br>' + d.long + '</small></div>' + track(w.ft) +
+      '</div></section>';
+
+    if (d.shots.length > 1) {
+      v += '<div class="hhead"><b>Shots of the day</b></div><div class="shots">' + d.shots.map(function (x, i) {
+        return '<button type="button" class="shot' + (i === f ? ' on' : '') + '" data-f="' + i + '"><img src="' + x.thumb + '" alt="" loading="lazy"><span class="tag1">' + ORD[i] + '</span><span class="ply">' + PLAY + '</span><span class="meta"><span class="big ft">' + ft(x.ft) + '</span><small>' + esc(x.name) + '</small></span></button>';
+      }).join('') + '</div>';
+    }
+    v += '<div class="hhead"><b>Full ranking</b><small>' + d.chip + ' · final results</small></div><section class="panel board">' + d.shots.map(function (x, i) {
+      return '<button type="button" class="r" data-f="' + i + '"><span class="pos' + (i === 0 ? ' p1' : '') + '">' + (i + 1) + '</span><span class="mini"><img src="' + x.thumb + '" alt="" loading="lazy"></span><span class="nm"><b>' + esc(x.name) + '</b></span><span class="big ft">' + ft(x.ft) + '</span>' + track(x.ft) + '</button>';
+    }).join('') + '</section>';
+    return v;
+  }
+
+  function vHio() {
+    var rungs = [['$10', '$4,000', 4000], ['$25', '$10,000', 10000], ['$100', '$40,000', 40000], ['$250', '$100,000', 100000], ['$2,500', '$1,000,000', 1000000]];
+    var v = '';
+    v += '<section class="jack fade-in"><img src="img/lb-hio.jpg" alt=""><div class="in"><span class="ey">HOLE-IN-ONE · ALL COURSES</span><h2>Ace it. Win 400× your bet.</h2>' +
+      '<p>Your jackpot scales with your entry. Bet anywhere from $10 to $2,500 before you swing — sink it from the tee and you win 400× that, up to $1,000,000.</p>' +
+      '<div class="ladder"><span class="lbl">POTENTIAL PAYOUT BY ENTRY</span>' + rungs.map(function (r, i) {
+        var w = Math.round(38 + (Math.log10(r[2]) - 3.6) / (6 - 3.6) * 62);
+        return '<div class="rung' + (i === rungs.length - 1 ? ' max' : '') + '"><span>Bet <b>' + r[0] + '</b></span><span class="bar"><span class="fill" style="width:' + w + '%"></span><span class="val">' + r[1] + '</span></span></div>';
+      }).join('') + '<span class="fine">Payout = entry × 400, capped at $1,000,000. One active bet per player at a time.</span></div>' +
+      '<a class="cta" href="Play.html">Choose your bet →</a></div></section>';
+    v += '<section class="panel noace"><svg class="cup" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="26" fill="#E3EFE0"/><ellipse cx="26" cy="35" rx="15" ry="5" fill="#0A6129"/><path d="M26 34V12" stroke="#102017" stroke-width="2" stroke-linecap="round"/><path d="M27 13l11 4-11 4z" fill="#FFE14D"/></svg><span class="grow"><b>No aces yet</b><small>Nobody has sunk one from the tee yet. The first verified ace goes here — with the payout their bet earned.</small></span></section>';
+    v += '<div class="hhead"><b>How a win is confirmed</b></div><section class="panel steps3">' +
+      '<div class="st"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M21 8l-5 4 5 4V8z"/></svg></span><span>Your tee shot is filmed by the course camera.</span></div>' +
+      '<div class="st"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span><span>TeeShot AI checks the ball finishes in the cup.</span></div>' +
+      '<div class="st"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span>Staff review the video before any payout.</span></div></section>';
+    v += '<div class="hhead"><b>Closest calls</b><small>close, but not in the cup</small></div><section class="panel board">' + CALLS.map(function (c, i) {
+      return '<div class="r"><span class="pos' + (i === 0 ? ' p1' : '') + '">' + (i + 1) + '</span><span class="mini"><img src="' + CF + c[3] + '/thumbnail/launch_angle.jpg" alt="" loading="lazy"></span><span class="nm"><b>' + esc(c[0]) + '</b><small>' + esc(c[1]) + '</small></span><span class="big ft">' + ft(c[2]) + '</span>' + track(c[2]) + '</div>';
+    }).join('') + '</section>';
+    return v;
+  }
+
+  function vPutt() {
+    return '<section class="soonc fade-in"><img src="img/lb-putt.jpg" alt="Golf ball rolling toward the cup"><div class="in"><span class="ey">Coming soon</span><h2>Longest putt</h2>' +
+      '<p>Drain the long one.<span class="sample">SAMPLE</span></p><p>A new game is on the way. We\'ll tell you when it opens.</p><span class="notify">🔔 Notify me</span></div></section><p class="more">More games coming soon.</p>';
+  }
+
+  function render() {
+    $('view').innerHTML = s.tab === 'ctp' ? vCtp() : s.tab === 'hio' ? vHio() : vPutt();
+    $('view').style.display = 'contents';
+    $('fair').hidden = s.tab === 'putt';
+    document.querySelectorAll('[data-day]').forEach(function (b) { b.addEventListener('click', function () { s.d = b.dataset.day === 'L' ? null : +b.dataset.day; s.f = 0; render(); }); });
+    document.querySelectorAll('[data-f]').forEach(function (b) { b.addEventListener('click', function () { s.f = +b.dataset.f; render(); var sp = document.querySelector('.spot'); if (sp && b.classList.contains('r')) sp.scrollIntoView({ behavior: 'smooth', block: 'center' }); }); });
+    var ch = $('change'); if (ch) ch.addEventListener('click', function () { $('sheet').hidden = false; });
+    var pp = $('pp'), hv = $('hv');
+    if (pp && hv) pp.addEventListener('click', function () {
+      if (hv.paused) { hv.play(); pp.innerHTML = PAUSE; pp.setAttribute('aria-label', 'Pause shot video'); }
+      else { hv.pause(); pp.innerHTML = PLAY; pp.setAttribute('aria-label', 'Play shot video'); }
+    });
+  }
+  document.querySelectorAll('[data-tab]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      s.tab = b.dataset.tab;
+      document.querySelectorAll('[data-tab]').forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      render();
+    });
+  });
+  $('close').addEventListener('click', function () { $('sheet').hidden = true; });
+  $('sheet').addEventListener('click', function (e) { if (e.target === $('sheet')) $('sheet').hidden = true; });
+  $('c-glen').addEventListener('click', function () { $('sheet').hidden = true; s.d = null; s.f = 0; render(); });
+  $('q').addEventListener('input', function () { var q = this.value.trim().toLowerCase(); $('c-glen').hidden = q && 'glen eagle golf club bolton, ontario'.indexOf(q) < 0; });
+  render();
+})();
+</script>
+</body>
+</html>
